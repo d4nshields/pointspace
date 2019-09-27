@@ -9,7 +9,8 @@
         "browser"
     ],
     "scripts": {
-        "test": "mocha -r ts-node/register src/**/*.spec.ts"
+        "test": "mocha -r ts-node/register src/**/*.spec.ts",
+        "test-knapsack": "mocha -r ts-node/register src/knapsack.spec.ts"
     },
     "author": "daniel",
     "contributors": [],

@@ -1,12 +1,12 @@
-export interface Comparable
+export interface Enumerable
 {
-    compareTo: (a:Object,b:Object) => number;
+    value(): number;
 }
 
 export class Knapsack
 {
     private size;
-    private array: Array<Object>;
+    private array: Array<Enumerable>;
     
     constructor( size: number)
     {
@@ -15,11 +15,27 @@ export class Knapsack
     }
     
     // public methods:
-    public insert( elem: Comparable)
+    public insert( elem: Enumerable)
     {
-        this.array.push( elem);
-        if( this.array.length > this.size) {
-            this.array = this.array.sort(elem.compareTo).slice( 0, this.size);
+        // find the offset in the this.array to insert the new element, allowing it to overflow off to the right
+        var done = false;
+        for( var i=0; i < Math.min( this.size, this.array.length); i++) {
+            if (elem.value() < this.array[i].value()) {
+                // shift [i..this.size] to the right to make room to insert at i
+                for( var j=Math.min( this.size, this.array.length); j >= i ; j--) {
+                    if( j+1 < this.size) {
+                        this.array[j+1]= this.array[j];
+                    }
+                }
+                done = true;
+                break;
+            }
+            if( done) {
+                break;
+            }
+        }
+        if( i < this.size) {        // if not overflowing
+            this.array[i] = elem;
         }
     }
     

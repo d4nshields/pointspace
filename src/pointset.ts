@@ -4,6 +4,11 @@ import {Knapsack, Comparable} from './knapsack';
 
 export {Point} from './point';
 
+/**
+ * Prediction represents a possible collision in the future at time offset 'when' in the future 
+ * for a set of points that are at known locations at time 0.
+ */
+
 export class Prediction<T> implements Comparable
 {
     private when: number;
