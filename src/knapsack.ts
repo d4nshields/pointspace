@@ -22,9 +22,9 @@ export class Knapsack
         for( var i=0; i < Math.min( this.size, this.array.length); i++) {
             if (elem.value() < this.array[i].value()) {
                 // shift [i..this.size] to the right to make room to insert at i
-                for( var j=Math.min( this.size, this.array.length); j >= i ; j--) {
+                for( var j=Math.min( this.size, this.array.length); j > i ; j--) {
                     if( j+1 < this.size) {
-                        this.array[j+1]= this.array[j];
+                        this.array[j]= this.array[j-1];
                     }
                 }
                 done = true;

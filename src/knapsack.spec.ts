@@ -65,4 +65,14 @@ describe( 'basic insert tests', function() {
         expect(result.length).equals( 5);
         done();
     });
+    it( 'stuff a large number of values into a size=5 knapsack', function( done) {
+        var knapsack = new Knapsack( 5);
+        for( var i=0; i < 1000000; i++) {
+            knapsack.insert( new test_element( Math.random()));
+        }
+        var result = knapsack.getElements();
+        console.log( 'knapsack:', result);
+        expect(result.length).equals( 5);
+        done();
+    });
 });
