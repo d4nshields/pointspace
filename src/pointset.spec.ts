@@ -1,4 +1,4 @@
-import {PointSet, Point} from './pointset';
+import {PointSet, Point, Prediction} from './pointset';
 import { expect} from 'chai';
 import 'mocha';
 
@@ -18,8 +18,6 @@ function initializeRandomPoints( n: number)
     }
 }
 
-const timeTolerance = 0.01;
-
 describe('inject some points', function() {
     this.timeout( 20000);
     it( 'spits out a list of pairs of points, sorted in priority order, of future intersections of the PointSet', function(done) {
@@ -30,25 +28,27 @@ describe('inject some points', function() {
             new Point( 4, 0),
         ];
         const pointset = new PointSet();
+        const threshold = 1;
         pointdata.map( (p: Point) => (pointset.addPoint( p)));
         //
-        const allCombo2 = pointset.allRelevantCombinations();
+        const allCombo2 = pointset.allRelevantPairs( threshold);
         console.log( 'allCombo2: ', allCombo2);
         done();
     });
     it( 'deals with a lot of points, to see how that changes things, outputs a table of results', function(done) {
         var prioritizedPoints;
-        const num = 8;
-        initializeRandomPoints( 2000);
+        const num = 8000;
+        const threshold = 1;
+        initializeRandomPoints(num);
         const pointset = new PointSet();
         pointdata.map( (p: Point) => (pointset.addPoint( p)));
         //
-        const allCombo3 = pointset.allRelevantCombinations();
-        console.log( 'combinations = '+allCombo3.length);
-        prioritizedPoints = PointSet.sortByWhen( allCombo3, (num*num-num)/2);
+        const predictions:Array<Prediction> = pointset.allRelevantPairs( threshold);
+        console.log( 'knapsack size: ', Math.floor( Math.pow(num, 1/3)));
+        prioritizedPoints = PointSet.sortByWhen( predictions, Math.pow(num, 1/3));
         console.log( 'number of intersections: '+prioritizedPoints.length);
         console.log('priority intersects: ', prioritizedPoints);
-        console.log('highest priority: ', prioritizedPoints.pop());
+        console.log('highest priority: ', prioritizedPoints.shift());
         done();
     });
 });

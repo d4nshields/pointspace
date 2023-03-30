@@ -1,5 +1,5 @@
 import {Point} from './point';
-import {Knapsack, Comparable} from './knapsack';
+import {Knapsack, Enumerable} from './knapsack';
 //
 
 export {Point} from './point';
@@ -9,26 +9,20 @@ export {Point} from './point';
  * for a set of points that are at known locations at time 0.
  */
 
-export class Prediction<T> implements Comparable
+export class Prediction implements Enumerable
 {
     private when: number;
-    private points: T;
+    private points: Array<Point>;
     
-    constructor( points: T, when: number)
+    constructor( points: Array<Point>, when: number)
     {
         this.points = points;
         this.when = when;
     }
-    
-    public compareTo( a: Prediction<T>, b: Prediction<T>)
+
+    value()
     {
-        if( ("undefined" == typeof b) || (a.when < b.when)) {
-            return -1;
-        } else if( ("undefined" == typeof a) || (a.when > b.when)) {
-            return +1;
-        } else {
-            return 0;
-        }
+        return this.when;
     }
 }
 
@@ -65,18 +59,13 @@ export class PointSet
         return ( t >= 0 ? t : undefined);
     }
     
-    public static sortByWhen( what: Array<Array<Point>>, size:number)
+    public static sortByWhen( what: Array<Prediction>, size:number)
     {
         var knapsack = new Knapsack( size);
         for( var i=0; i<what.length; i++) {
-            var when = PointSet.when( what[i][0], what[i][1]);
+            var when = what[i].value();
             if( "undefined" !== typeof when) {
-                knapsack.insert( 
-                    new Prediction<Array<Point>>( 
-                        what[i], 
-                        when
-                    )
-                );
+                knapsack.insert( what[i]);
             }
         }
         return knapsack.getElements();
@@ -84,13 +73,17 @@ export class PointSet
 
     /**
      * returns all combinations of 2 points from current set
+     * that are expected to intersect at their current velocity within threshold
     */
-    public allRelevantCombinations(): Array<Array<Point>>
+    public allRelevantPairs( threshold: number): Array<Prediction>
     {
-        var result: Array<Array<Point>> = new Array<Array<Point>>();
+        var result: Array<Prediction> = new Array<Prediction>();
         for( var i=0; i < this.points.length; i++) {
             for( var j=i+1; j < this.points.length; j++) {
-                result.push( [this.points[i], this.points[j]]);
+                var when = PointSet.when( this.points[i], this.points[j]);
+                if( when && when < threshold) {
+                    result.push( new Prediction( [this.points[i], this.points[j]], when));
+                }
             }
         }
         return result;

@@ -10,7 +10,7 @@ export class Knapsack
     
     constructor( size: number)
     {
-        this.size = size;
+        this.size = Math.floor( size);
         this.array = new Array();
     }
     
@@ -24,7 +24,7 @@ export class Knapsack
                 // shift [i..this.size] to the right to make room to insert at i
                 for( var j=Math.min( this.size, this.array.length); j > i ; j--) {
                     if( j+1 < this.size) {
-                        this.array[j]= this.array[j-1];
+                        this.array[j] = this.array[j-1];
                     }
                 }
                 done = true;
